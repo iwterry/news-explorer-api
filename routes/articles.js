@@ -5,8 +5,13 @@ const {
   handleDeleteArticle,
 } = require('../controllers/articles');
 
-router.post('/', handleCreateArticle);
+const {
+  validateDeleteArticleRequest,
+  validateCreateArticleRequest,
+} = require('../middleware/validation/articles');
+
+router.post('/', validateCreateArticleRequest, handleCreateArticle);
 router.get('/', handleGetArticles);
-router.delete('/:id', handleDeleteArticle);
+router.delete('/:id', validateDeleteArticleRequest, handleDeleteArticle);
 
 module.exports = router;
