@@ -15,9 +15,9 @@ const articleSchema = new mongoose.Schema({
     required: true,
   },
   date: {
-    type: String,
+    type: Date,
     required: true,
-    validate: validator.isDate,
+    max: Date.now,
   },
   source: {
     type: String,
