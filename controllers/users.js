@@ -13,6 +13,7 @@ module.exports.handleGetCurrentUser = (req, res, next) => {
       }
 
       res.send({
+        _id: user._id,
         email: user.email,
         name: user.name,
       });
