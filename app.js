@@ -1,11 +1,9 @@
 const mongoose = require('mongoose');
 const express = require('express');
+require('./helpers/config');
 const appRouter = require('./routes');
 
-const {
-  PORT = 3000,
-  DATABASE_URL = 'mongodb://localhost:27017/news_explorer_api_dev',
-} = process.env;
+const { PORT, DATABASE_URL } = process.env;
 
 const app = express();
 
