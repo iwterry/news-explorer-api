@@ -1,5 +1,7 @@
 const Article = require('../models/article');
 
+const { getHttpError, httpStatusCodes } = require('../helpers/http');
+
 function formatArticleForClient(articleFromDb) {
   return {
     keyword: articleFromDb.keyword,
@@ -41,9 +43,8 @@ module.exports.handleCreateArticle = (req, res, next) => {
     owner: req.user._id,
   })
     .then((articleFromDb) => {
-      const RESOURCE_CREATED_STATUS_CODE = 201;
       res
-        .status(RESOURCE_CREATED_STATUS_CODE)
+        .status(httpStatusCodes.resourceCreated)
         .send(formatArticleForClient(articleFromDb));
     })
     .catch(next);
@@ -58,26 +59,17 @@ module.exports.handleDeleteArticle = (req, res, next) => {
   Article.findById(articleId, { owner: true })
     .then((articleFromDb) => {
       if (articleFromDb === null) {
-        const NO_RESOURCE_FOUND_STATUS_CODE = 404;
-        const err = new Error('Requested article could not be found.');
-        err.httpStatusCode = NO_RESOURCE_FOUND_STATUS_CODE;
-        throw err;
+        throw getHttpError(httpStatusCodes.noResourceFound, 'Requested article could not be found.');
       }
 
       if (articleFromDb.owner.toHexString() !== req.user._id) {
-        const FORBIDDEN_STATUS_CODE = 403;
-        const err = new Error('Not authorized to view the given article.');
-        err.httpStatusCode = FORBIDDEN_STATUS_CODE;
-        throw err;
+        throw getHttpError(httpStatusCodes.unauthorized, 'Not authorized to view the given article.');
       }
 
       return Article.deleteOne({ _id: articleFromDb._id });
     })
     .then(() => {
-      const NO_CONTENT_STATUS_CODE = 204;
-      res
-        .status(NO_CONTENT_STATUS_CODE)
-        .end();
+      res.status(httpStatusCodes.noContentSent).end();
     })
     .catch(next);
 };

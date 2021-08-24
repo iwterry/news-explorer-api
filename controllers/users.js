@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
+const { getHttpError, httpStatusCodes } = require('../helpers/http');
+
 module.exports.handleGetCurrentUser = (req, res, next) => {
   // temp solution before adding authentication
   req.user = {
@@ -26,6 +28,7 @@ module.exports.handleGetCurrentUser = (req, res, next) => {
 module.exports.handleCreateUser = (req, res, next) => {
   const { body } = req;
   const SALT_LENGTH = 10;
+
   bcrypt.hash(body.password, SALT_LENGTH)
     .then((hashedPassword) => (
       User.create({
@@ -50,10 +53,7 @@ module.exports.handleCreateUser = (req, res, next) => {
         throw err;
       }
 
-      const CONFLICT_STATUS_CODE = 209;
-      const newError = new Error('Must use a different email to create a new user.');
-      newError.httpStatusCode = CONFLICT_STATUS_CODE;
-      throw newError;
+      throw getHttpError(httpStatusCodes.conflict, 'Must use a different email to create a new user.');
     })
     .catch(next);
 };
