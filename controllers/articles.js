@@ -15,9 +15,6 @@ function formatArticleForClient(articleFromDb) {
 }
 
 module.exports.handleGetArticles = (req, res, next) => {
-  // temp solution before adding authentication
-  req.user = { _id: '6120bf8b108e9c1798bdefbb' };
-
   Article.find({ owner: req.user._id })
     .then((articlesFromDb) => {
       const articesForClient = articlesFromDb.map(formatArticleForClient);
@@ -28,9 +25,6 @@ module.exports.handleGetArticles = (req, res, next) => {
 
 module.exports.handleCreateArticle = (req, res, next) => {
   const { body } = req;
-
-  // temp solution before adding authentication
-  req.user = { _id: '6120bf8b108e9c1798bdefbb' };
 
   Article.create({
     keyword: body.keyword,
@@ -52,9 +46,6 @@ module.exports.handleCreateArticle = (req, res, next) => {
 
 module.exports.handleDeleteArticle = (req, res, next) => {
   const { id: articleId } = req.params;
-
-  // temp solution before adding authentication
-  req.user = { _id: '6120bf8b108e9c1798bdefbb' };
 
   Article.findById(articleId, { owner: true })
     .then((articleFromDb) => {

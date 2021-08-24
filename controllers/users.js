@@ -4,11 +4,6 @@ const User = require('../models/user');
 const { getHttpError, httpStatusCodes } = require('../helpers/http');
 
 module.exports.handleGetCurrentUser = (req, res, next) => {
-  // temp solution before adding authentication
-  req.user = {
-    _id: '6120bf8b108e9c1798bdefbb',
-  };
-
   User.findById(req.user._id)
     .then((user) => {
       if (user === null) {
