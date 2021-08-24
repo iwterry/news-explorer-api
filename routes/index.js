@@ -5,12 +5,15 @@ const handleValidationErrors = require('../middleware/error/validation');
 const auth = require('../controllers/auth');
 const { handleCreateUser } = require('../controllers/users');
 
+const validateSignUpRequest = require('../middleware/validation/user');
+const validateSignInRequest = require('../middleware/validation/auth');
+
 const router = express.Router();
 
 router.use(express.json());
 
-router.post('/signin', auth);
-router.post('/signup', handleCreateUser);
+router.post('/signin', validateSignInRequest, auth);
+router.post('/signup', validateSignUpRequest, handleCreateUser);
 
 router.use('/articles', articlesRouter);
 router.use('/users', usersRouter);
