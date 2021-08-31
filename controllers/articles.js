@@ -4,6 +4,7 @@ const { getHttpError, httpStatusCodes } = require('../helpers/http');
 
 function formatArticleForClient(articleFromDb) {
   return {
+    _id: articleFromDb._id,
     keyword: articleFromDb.keyword,
     title: articleFromDb.title,
     text: articleFromDb.text,
