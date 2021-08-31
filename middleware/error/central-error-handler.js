@@ -6,6 +6,7 @@ module.exports = (err, req, res, next) => {
     return;
   }
 
+  // eslint-disable-next-line no-console
   console.log(err);
   res.status(500).send({ message: 'There is a problem on our end. Please try again later.' });
 };
