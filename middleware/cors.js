@@ -5,36 +5,24 @@
   accomplish much of the same things without it.
 */
 module.exports = (req, res, next) => {
-  const OPTIONS_HTTP_METHOD = 'options';
-  const isOptionsRequest = req.method.toLowerCase() === OPTIONS_HTTP_METHOD;
-
-  const headerNames = {
-    origin: 'origin',
+  const corsHeaderNames = {
     allowOrigin: 'access-control-allow-origin',
     allowMethods: 'access-control-allow-methods',
     allowHeaders: 'access-control-allow-headers',
   };
 
-  const allowedOrigins = [
-    'http://127.0.0.1:5500',
-  ];
+  const corsHeaderValues = {
+    allowedOrigin: '*',
+    allowedMethods: 'get, post, delete',
+    allowedHeaders: 'authorization, content-type',
+  };
 
-  const originOfRequest = req.header(headerNames.origin);
-  const isOriginOfRequestApproved = allowedOrigins.includes(originOfRequest);
+  res.header(corsHeaderNames.allowOrigin, corsHeaderValues.allowedOrigin);
+  res.header(corsHeaderNames.allowMethods, corsHeaderValues.allowedMethods);
+  res.header(corsHeaderNames.allowHeaders, corsHeaderValues.allowedHeaders);
 
-  if (isOptionsRequest && !isOriginOfRequestApproved) {
-    next();
-    return;
-  }
-
-  const allowedHttpMethods = 'get, post, delete';
-  const allowedHeaders = 'authorization, content-type';
-
-  if (originOfRequest) {
-    res.header(headerNames.allowOrigin, originOfRequest);
-    res.header(headerNames.allowMethods, allowedHttpMethods);
-    res.header(headerNames.allowHeaders, allowedHeaders);
-  }
+  const OPTIONS_HTTP_METHOD = 'options';
+  const isOptionsRequest = req.method.toLowerCase() === OPTIONS_HTTP_METHOD;
 
   if (isOptionsRequest) res.end();
   else next();
