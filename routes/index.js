@@ -1,5 +1,6 @@
 const express = require('express');
 const helmet = require('helmet');
+const cors = require('cors');
 
 const articlesRouter = require('./articles');
 const usersRouter = require('./users');
@@ -13,14 +14,13 @@ const centralErrorHandler = require('../middleware/error/central-error-handler')
 const validateSignUpRequest = require('../middleware/validation/user');
 const validateSignInRequest = require('../middleware/validation/auth');
 const { requestLogger, errorLogger } = require('../middleware/loggers');
-const cors = require('../middleware/cors');
 
 const router = express.Router();
 
 router.use(requestLogger);
 router.use(helmet());
 router.use(express.json());
-router.use(cors);
+router.use(cors());
 
 router.post('/signin', validateSignInRequest, auth);
 router.post('/signup', validateSignUpRequest, handleCreateUser);
