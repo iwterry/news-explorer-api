@@ -1,7 +1,6 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
-
-const { getHttpError, httpStatusCodes } = require('../helpers/http');
+const { handleMongoDbDuplicationError } = require('../helpers/helpers');
 
 module.exports.handleGetCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
@@ -41,15 +40,6 @@ module.exports.handleCreateUser = (req, res, next) => {
         name: user.name,
       });
     })
-    .catch((err) => {
-      const MONGO_DUPLICATION_ERROR_NAME = 'MongoError';
-      const MONGO_DUPLICATION_ERROR_CODE = 11000;
-
-      if (err.name !== MONGO_DUPLICATION_ERROR_NAME || err.code !== MONGO_DUPLICATION_ERROR_CODE) {
-        throw err;
-      }
-
-      throw getHttpError(httpStatusCodes.conflict, 'Must use a different email to create a new user.');
-    })
+    .catch(handleMongoDbDuplicationError({ errMsg: 'Must use a different email to create a new user.' }))
     .catch(next);
 };

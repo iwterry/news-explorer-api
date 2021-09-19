@@ -41,6 +41,11 @@ const articleSchema = new mongoose.Schema({
   },
 });
 
+articleSchema.statics.validateUniqueArticlePerOwner = function validate({ owner, link }) {
+  return this.findOne({ owner, link })
+    .then((article) => article === null);
+};
+
 const Article = mongoose.model('Article', articleSchema);
 
 module.exports = Article;

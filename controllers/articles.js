@@ -27,7 +27,7 @@ module.exports.handleGetArticles = (req, res, next) => {
 module.exports.handleCreateArticle = (req, res, next) => {
   const { body } = req;
 
-  Article.create({
+  const newArticle = new Article({
     keyword: body.keyword,
     title: body.title,
     text: body.text,
@@ -36,7 +36,15 @@ module.exports.handleCreateArticle = (req, res, next) => {
     link: body.link,
     image: body.image,
     owner: req.user._id,
-  })
+  });
+
+  Article.validateUniqueArticlePerOwner(newArticle)
+    .then((isValid) => {
+      const errorMessage = "For each user, each article's link must be unique.";
+      if (!isValid) throw getHttpError(httpStatusCodes.conflict, errorMessage);
+
+      return newArticle.save();
+    })
     .then((articleFromDb) => {
       res
         .status(httpStatusCodes.resourceCreated)
@@ -55,7 +63,7 @@ module.exports.handleDeleteArticle = (req, res, next) => {
       }
 
       if (articleFromDb.owner.toHexString() !== req.user._id) {
-        throw getHttpError(httpStatusCodes.unauthorized, 'Not authorized to view the given article.');
+        throw getHttpError(httpStatusCodes.unauthorized, 'Not authorized to delete the given article.');
       }
 
       return Article.deleteOne({ _id: articleFromDb._id });
