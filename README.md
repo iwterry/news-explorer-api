@@ -6,9 +6,6 @@
 * Add, delete, and get articles
 * Deployed using Google Cloud
 
-## Public IP address: 35.184.152.217
-## Backend: https://api.iwterry-news-explorer.students.nomoreparties.site
-
 ## Routes
 ### Routes without authentication
 #### POST /signin
